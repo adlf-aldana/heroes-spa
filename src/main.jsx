@@ -4,7 +4,6 @@ import { BrowserRouter as Router } from "react-router-dom";
 
 import { HeroesApp } from "./HeroesApp";
 import "./styles.css";
-import "animate.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
