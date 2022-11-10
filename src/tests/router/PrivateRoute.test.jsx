@@ -1,4 +1,5 @@
 const { render, screen } = require("@testing-library/react");
+import { MemoryRouter } from "react-router-dom";
 const { AuthContext } = require("../../auth/context/AuthContext");
 const { PrivateRoute } = require("../../router/PrivateRoute");
 
@@ -16,7 +17,7 @@ describe("Pruebas en el <PrivateRoute />", () => {
 
     render(
       <AuthContext.Provider value={contextValue}>
-        <MemoryRouter initalEntries={["/search?q=batman"]}>
+        <MemoryRouter initialEntries={["/search?q=batman"]}>
           <PrivateRoute>
             <h1>Ruta Privada</h1>
           </PrivateRoute>
@@ -24,7 +25,7 @@ describe("Pruebas en el <PrivateRoute />", () => {
       </AuthContext.Provider>
     );
 
-    expect(screen.getByAltText("Ruta Privada")).toBeTruthy();
+    expect(screen.getByText("Ruta Privada")).toBeTruthy();
     expect(localStorage.setItem).toHaveBeenCalledWith(
       "lastPath",
       "/search?q=batman"
