@@ -1,8 +1,17 @@
-const { render, screen } = require("@testing-library/react");
+const { render, screen, fireEvent } = require("@testing-library/react");
 const { MemoryRouter } = require("react-router-dom");
 const { SearchPage } = require("../../../heroes/pages/SearchPage");
 
+const mockedUseNavigate = jest.fn();
+
+jest.mock("react-router-dom", () => ({
+  ...jest.requireActual("react-router-dom"),
+  useNavigate: () => mockedUseNavigate,
+}));
+
 describe("pruebas en <SearchPage />", () => {
+  beforeEach(() => jest.clearAllMocks());
+
   test("debe de mostrarse correctamente con valores por defecto", () => {
     const { container } = render(
       <MemoryRouter>
@@ -28,5 +37,34 @@ describe("pruebas en <SearchPage />", () => {
 
     const alert = screen.getByLabelText("alert-danger");
     expect(alert.style.display).toBe("none");
+  });
+
+  test("debe de mostrar un error si no se encuentra el hero (batman123)", () => {
+    render(
+      <MemoryRouter initialEntries={["/search?q=batman123"]}>
+        <SearchPage />
+      </MemoryRouter>
+    );
+
+    const alert = screen.getByLabelText("alert-danger");
+    expect(alert.style.display).toBe("");
+  });
+
+  test("debe de llamar el navigate a la pantalla nueva", () => {
+    render(
+      <MemoryRouter initialEntries={["/search"]}>
+        <SearchPage />
+      </MemoryRouter>
+    );
+
+    const input = screen.getByRole("textbox");
+    fireEvent.change(input, {
+      target: { name: "searchText", value: "superman" },
+    });
+
+    const form = screen.getByRole("form");
+    fireEvent.submit(form);
+
+    expect(mockedUseNavigate).toHaveBeenCalledWith("?q=superman");
   });
 });
